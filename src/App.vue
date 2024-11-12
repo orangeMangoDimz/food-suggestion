@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { GoogleGenerativeAI } from '@google/generative-ai'
+import { title } from 'process'
 import { computed, ref, watch } from 'vue'
 const GOOGLE_API_KEY = import.meta.env.VITE_API_GOOGLE_API_KEY
 
@@ -100,24 +101,41 @@ interface Question {
   choices: Choice[]
 }
 
+interface Answer {
+  defMsg?: string
+  hasAns?: boolean
+  hasErr?: boolean
+  title?: string
+  body: {
+    description: string
+    tools: Array<string>
+    ingredients: Array<string>
+    steps: Array<string>
+  }
+}
+
 const data: Question[] = questions
 const ansList = ref<Array<Choice>>([] as Choice[])
 const currQuestionNum = ref<number>(0)
-const response = ref<object>({
+const response = ref<Answer>({
   defMsg: 'Processing ...',
   hasAns: false,
   hasErr: false,
   title: '',
-  body: '',
+  body: {
+    description: '',
+    tools: [],
+    ingredients: [],
+    steps: [],
+  },
 })
 
-const chooseAns = (e: MouseEvent, value: Choice) => {
+const chooseAns = (_: MouseEvent, value: Choice) => {
   ansList.value.push(value)
-  console.log('ansList: ', ansList.value)
   currQuestionNum.value++
 }
 
-const processAns = computed<object>(() => response.value)
+const processAns = computed<Answer>(() => response.value)
 
 const askAI = (): void => {
   const genAI = new GoogleGenerativeAI(GOOGLE_API_KEY)
@@ -134,29 +152,60 @@ const askAI = (): void => {
 2. Gunakan format jawaban berikut:
     Judul: [Nama Makanan]
     Isi: [Deskripsi Makanan]
+    Alat: [List Alat berupa array dipisah dengan tanda koma]
+    Bahan: [List Bahan berupa array dipisah dengan tanda koma]
+    Steps: [List langkah - langkah berupa array dipisah dengan tanda koma]
 3. Gunakan huruf kecil untuk semua kata dan tidak mengandung format markdown
+4. Untuk jawaban berupa array, jangan gunakan penomeran. Cukup pisahkan dengan koma dan spasi. Jika lebih dari 1 kalimat, pisahkan dengan tanda titik dan spasi
 `
   //> text = originalText.split(/Title:|Body:|Footer:/).map(item => item.trim()).slice(1);
+
+  const handleResponse = (res: string): void => {
+    const sections: Array<string> = res.split('\n').map(item => item.trim())
+    sections.map((section, index) => {
+    console.log("index: ", index)
+      console.log("section: ", section)
+    })
+    let judul: string,
+      isi: string,
+      alat: Array<string>,
+      bahan: Array<string>,
+    steps: Array<string>
+
+    judul = sections[0].split(':')[1].trim()
+    isi = sections[1].split(':')[1].trim()
+    alat = sections[2]
+      .split(':')[1]
+      .split(',')
+      .map(item => item.trim())
+    bahan = sections[3]
+      .split(':')[1]
+      .split(',')
+      .map(item => item.trim())
+    steps = sections[4]
+      .split(':')[1]
+      .split(',')
+      .map(item => item.trim())
+
+    response.value = {
+      title: judul,
+      body: {
+        description: isi,
+        tools: alat,
+        ingredients: bahan,
+        steps: steps
+      },
+      hasAns: true,
+      hasErr: false,
+    }
+  }
 
   console.log('prompt: ', prompt)
   model
     .generateContent(prompt)
     .then(res => {
       const result: string = res.response.text()
-      console.log('result: ', result)
-      if (result.toLowerCase().includes('judul')) {
-        const deconstructAns: Array<string> = result
-          .split(/judul:|isi:/)
-          .map(item => item.trim())
-          .slice(1)
-        console.log('test: ', deconstructAns)
-        response.value = {
-          title: deconstructAns[0],
-          body: deconstructAns[1],
-          hasAns: true,
-          hasErr: false,
-        }
-      }
+      handleResponse(result)
     })
     .catch(err => {
       console.error(err)
@@ -164,6 +213,12 @@ const askAI = (): void => {
         defMsg: 'Error: Something went wrong',
         hasAns: false,
         hasErr: true,
+        body: {
+          description: '',
+          tools: [],
+          ingredients: [],
+          steps: [],
+        },
       }
     })
 }
@@ -193,9 +248,28 @@ watch(currQuestionNum, newVal => {
   <div v-else>
     <div v-if="processAns.hasAns">
       <h3>{{ processAns.title }}</h3>
-      <p>{{ processAns.body }}</p>
+      <p>Deskripsi</p>
+      <p>{{ processAns.body.description }}</p>
+      <p>Alat</p>
+      <ul>
+        <li v-for="(tool, index) in processAns.body.tools" :key="index">
+          {{ tool }}
+        </li>
+      </ul>
+      <p>Bahan</p>
+      <ul>
+        <li v-for="(ingredient, index) in processAns.body.ingredients" :key="index">
+          {{ ingredient }}
+        </li>
+      </ul>
+      <p>Cara memasak</p>
+      <ul>
+        <li v-for="(step, index) in processAns.body.steps" :key="index">
+          {{ step }}
+        </li>
+      </ul>
     </div>
-      <p v-else>{{ processAns.defMsg }}</p>
+    <p v-else>{{ processAns.defMsg }}</p>
   </div>
 </template>
 
