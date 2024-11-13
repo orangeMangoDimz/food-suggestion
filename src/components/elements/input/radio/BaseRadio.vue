@@ -23,11 +23,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <!--
-  <fwb-p class="mb-2"> Technology {{ picked }} </fwb-p>
--->
-
-  <fwb-list-group>
+  <fwb-list-group class="w-full">
     <fwb-list-group-item v-for="(item, index) in items" :key="index">
       <fwb-radio v-model="picked" :label="item.label" :name="item.name" :value="item.value" @update:model-value="($event) => emit('chooseAns', $event, item)"/>
     </fwb-list-group-item>

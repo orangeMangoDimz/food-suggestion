@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { computed, ref, watch } from 'vue'
-import QuestionsCard from './components/questions/QuestionsCard.vue';
+import QuestionsCard from './components/questions/QuestionsCard.vue'
+import RecomendationCard from './components/recomendations/RecomendationCard.vue'
 const GOOGLE_API_KEY = import.meta.env.VITE_API_GOOGLE_API_KEY
 
 const questions = [
@@ -9,27 +10,72 @@ const questions = [
     id: 1,
     question: 'Bagaimana perasaanmu hari ini?',
     choices: [
-      { id: 1, value: 'Senang dan Berenergi', name: 'mood', label: 'Senang dan Berenergi' },
-      { id: 2, value: 'Sedih dan Lelah', name: 'mood', label: 'Sedih dan Lelah' },
-      { id: 3, value: 'Marah dan Frustrasi', name: 'mood', label: 'Marah dan Frustrasi' },
-      { id: 4, value: 'Tenang dan Rileks', name: 'mood', label: 'Tenang dan Rileks' },
+      {
+        id: 1,
+        value: 'Senang dan Berenergi',
+        name: 'mood',
+        label: 'Senang dan Berenergi',
+      },
+      {
+        id: 2,
+        value: 'Sedih dan Lelah',
+        name: 'mood',
+        label: 'Sedih dan Lelah',
+      },
+      {
+        id: 3,
+        value: 'Marah dan Frustrasi',
+        name: 'mood',
+        label: 'Marah dan Frustrasi',
+      },
+      {
+        id: 4,
+        value: 'Tenang dan Rileks',
+        name: 'mood',
+        label: 'Tenang dan Rileks',
+      },
     ],
   },
   {
     id: 2,
     question: 'Makanan seperti apa yang sedang kamu inginkan?',
     choices: [
-      { id: 1, value: 'Sesuatu yang Asin dan Renyah', name: 'preference', label: 'Sesuatu yang Asin dan Renyah' },
-      { id: 2, value: 'Sesuatu yang Manis dan Menggoda', name: 'preference', label: 'Sesuatu yang Manis dan Menggoda' },
-      { id: 3, value: 'Sesuatu yang Hangat dan Nyaman', name: 'preference', label: 'Sesuatu yang Hangat dan Nyaman' },
-      { id: 4, value: 'Sesuatu yang Ringan dan Segar', name: 'preference', label: 'Sesuatu yang Ringan dan Segar' },
+      {
+        id: 1,
+        value: 'Sesuatu yang Asin dan Renyah',
+        name: 'preference',
+        label: 'Sesuatu yang Asin dan Renyah',
+      },
+      {
+        id: 2,
+        value: 'Sesuatu yang Manis dan Menggoda',
+        name: 'preference',
+        label: 'Sesuatu yang Manis dan Menggoda',
+      },
+      {
+        id: 3,
+        value: 'Sesuatu yang Hangat dan Nyaman',
+        name: 'preference',
+        label: 'Sesuatu yang Hangat dan Nyaman',
+      },
+      {
+        id: 4,
+        value: 'Sesuatu yang Ringan dan Segar',
+        name: 'preference',
+        label: 'Sesuatu yang Ringan dan Segar',
+      },
     ],
   },
   {
     id: 3,
     question: 'Berapa lama waktu yang kamu miliki untuk memasak?',
     choices: [
-      { id: 1, value: 'Sama sekali tidak ada waktu', name: 'time', label: 'Sama sekali tidak ada waktu' },
+      {
+        id: 1,
+        value: 'Sama sekali tidak ada waktu',
+        name: 'time',
+        label: 'Sama sekali tidak ada waktu',
+      },
       { id: 2, value: '15-30 menit', name: 'time', label: '15-30 menit' },
       { id: 3, value: '30-45 menit', name: 'time', label: '30-45 menit' },
       { id: 4, value: '45+ menit', name: 'time', label: '45+ menit' },
@@ -39,10 +85,25 @@ const questions = [
     id: 4,
     question: 'Untuk acara apa makanan ini?',
     choices: [
-      { id: 1, value: 'Makan Malam Santai', name: 'occasion', label: 'Makan Malam Santai' },
-      { id: 2, value: 'Makan Malam Romantis', name: 'occasion', label: 'Makan Malam Romantis' },
+      {
+        id: 1,
+        value: 'Makan Malam Santai',
+        name: 'occasion',
+        label: 'Makan Malam Santai',
+      },
+      {
+        id: 2,
+        value: 'Makan Malam Romantis',
+        name: 'occasion',
+        label: 'Makan Malam Romantis',
+      },
       { id: 3, value: 'Pesta', name: 'occasion', label: 'Pesta' },
-      { id: 4, value: 'Makan Sendiri', name: 'occasion', label: 'Makan Sendiri' },
+      {
+        id: 4,
+        value: 'Makan Sendiri',
+        name: 'occasion',
+        label: 'Makan Sendiri',
+      },
     ],
   },
   {
@@ -52,27 +113,72 @@ const questions = [
       { id: 1, value: 'Ringan', name: 'spiciness', label: 'Ringan' },
       { id: 2, value: 'Sedang', name: 'spiciness', label: 'Sedang' },
       { id: 3, value: 'Pedas', name: 'spiciness', label: 'Pedas' },
-      { id: 4, value: 'Sangat Pedas', name: 'spiciness', label: 'Sangat Pedas' },
+      {
+        id: 4,
+        value: 'Sangat Pedas',
+        name: 'spiciness',
+        label: 'Sangat Pedas',
+      },
     ],
   },
   {
     id: 6,
     question: 'Metode memasak apa yang kamu sukai?',
     choices: [
-      { id: 1, value: 'Memanggang', name: 'cookingMethod', label: 'Memanggang' },
-      { id: 2, value: 'Membakar', name: 'cookingMethod', label: 'Membakar' },
-      { id: 3, value: 'Menumis', name: 'cookingMethod', label: 'Menumis' },
-      { id: 4, value: 'Merebus', name: 'cookingMethod', label: 'Merebus' },
+      {
+        id: 1,
+        value: 'Memanggang',
+        name: 'cookingMethod',
+        label: 'Memanggang',
+      },
+      {
+        id: 2,
+        value: 'Membakar',
+        name: 'cookingMethod',
+        label: 'Membakar',
+      },
+      {
+        id: 3,
+        value: 'Menumis',
+        name: 'cookingMethod',
+        label: 'Menumis',
+      },
+      {
+        id: 4,
+        value: 'Merebus',
+        name: 'cookingMethod',
+        label: 'Merebus',
+      },
     ],
   },
   {
     id: 7,
     question: 'Berapa anggaranmu untuk makanan ini?',
     choices: [
-      { id: 1, value: 'Anggaran Rendah', name: 'budget', label: 'Anggaran Rendah' },
-      { id: 2, value: 'Anggaran Sedang', name: 'budget', label: 'Anggaran Sedang' },
-      { id: 3, value: 'Anggaran Tinggi', name: 'budget', label: 'Anggaran Tinggi' },
-      { id: 4, value: 'Tidak Ada Anggaran', name: 'budget', label: 'Tidak Ada Anggaran' },
+      {
+        id: 1,
+        value: 'Anggaran Rendah',
+        name: 'budget',
+        label: 'Anggaran Rendah',
+      },
+      {
+        id: 2,
+        value: 'Anggaran Sedang',
+        name: 'budget',
+        label: 'Anggaran Sedang',
+      },
+      {
+        id: 3,
+        value: 'Anggaran Tinggi',
+        name: 'budget',
+        label: 'Anggaran Tinggi',
+      },
+      {
+        id: 4,
+        value: 'Tidak Ada Anggaran',
+        name: 'budget',
+        label: 'Tidak Ada Anggaran',
+      },
     ],
   },
   {
@@ -82,7 +188,12 @@ const questions = [
       { id: 1, value: 'Sedikit', name: 'portionSize', label: 'Sedikit' },
       { id: 2, value: 'Sedang', name: 'portionSize', label: 'Sedang' },
       { id: 3, value: 'Banyak', name: 'portionSize', label: 'Banyak' },
-      { id: 4, value: 'Tidak Penting', name: 'portionSize', label: 'Tidak Penting' },
+      {
+        id: 4,
+        value: 'Tidak Penting',
+        name: 'portionSize',
+        label: 'Tidak Penting',
+      },
     ],
   },
 ]
@@ -94,13 +205,13 @@ export interface Choice {
   value: string
 }
 
-interface Question {
+export interface Question {
   id: number
   question: string
   choices: Choice[]
 }
 
-interface Answer {
+export interface Answer {
   defMsg?: string
   hasAns?: boolean
   hasErr?: boolean
@@ -134,6 +245,10 @@ const chooseAns = (_: MouseEvent, value: Choice) => {
   currQuestionNum.value++
 }
 
+const currQuestion = computed<Question>(() => {
+  return data[currQuestionNum.value]
+})
+
 const processAns = computed<Answer>(() => response.value)
 
 const askAI = (): void => {
@@ -162,14 +277,14 @@ const askAI = (): void => {
   const handleResponse = (res: string): void => {
     const sections: Array<string> = res.split('\n').map(item => item.trim())
     sections.map((section, index) => {
-    console.log("index: ", index)
-      console.log("section: ", section)
+      console.log('index: ', index)
+      console.log('section: ', section)
     })
     let judul: string,
       isi: string,
       alat: Array<string>,
       bahan: Array<string>,
-    steps: Array<string>
+      steps: Array<string>
 
     judul = sections[0].split(':')[1].trim()
     isi = sections[1].split(':')[1].trim()
@@ -181,9 +296,13 @@ const askAI = (): void => {
       .split(':')[1]
       .split(',')
       .map(item => item.trim())
-    steps = sections[4]
-      .split(':')[1]
-      .split(',')
+    steps = sections[4].split(':')[1].split(',')
+
+    console.log('judul: ', judul)
+    console.log('isi: ', isi)
+    console.log('alat: ', alat)
+    console.log('bahan: ', bahan)
+    console.log('steps: ', steps)
 
     response.value = {
       title: judul,
@@ -191,14 +310,13 @@ const askAI = (): void => {
         description: isi,
         tools: alat,
         ingredients: bahan,
-        steps: steps
+        steps: steps,
       },
       hasAns: true,
       hasErr: false,
     }
   }
 
-  console.log('prompt: ', prompt)
   model
     .generateContent(prompt)
     .then(res => {
@@ -229,37 +347,15 @@ watch(currQuestionNum, newVal => {
 </script>
 
 <template>
-  <div v-if="currQuestionNum < data.length">
-    <div v-for="item in data" :key="item.id">
-      <QuestionsCard :header="item.question" :body="item.choices" @choose-ans="chooseAns" />
+  <main class="h-screen flex flex-col justify-center items-center">
+    <div v-if="currQuestionNum < data.length">
+      <QuestionsCard :header="currQuestion" :total-quesiton="data.length" :body="currQuestion.choices" @choose-ans="chooseAns" />
     </div>
-  </div>
-  <div v-else>
-    <div v-if="processAns.hasAns">
-      <h3>{{ processAns.title }}</h3>
-      <p>Deskripsi</p>
-      <p>{{ processAns.body.description }}</p>
-      <p>Alat</p>
-      <ul>
-        <li v-for="(tool, index) in processAns.body.tools" :key="index">
-          {{ tool }}
-        </li>
-      </ul>
-      <p>Bahan</p>
-      <ul>
-        <li v-for="(ingredient, index) in processAns.body.ingredients" :key="index">
-          {{ ingredient }}
-        </li>
-      </ul>
-      <p>Cara memasak</p>
-      <ul>
-        <li v-for="(step, index) in processAns.body.steps" :key="index">
-          {{ step }}
-        </li>
-      </ul>
+    <div v-else>
+      <div v-if="processAns.hasAns">
+        <RecomendationCard header="Hello" :body="processAns" />
+      </div>
+      <p v-else>{{ processAns.defMsg }}</p>
     </div>
-    <p v-else>{{ processAns.defMsg }}</p>
-  </div>
+  </main>
 </template>
-
-<style scoped></style>

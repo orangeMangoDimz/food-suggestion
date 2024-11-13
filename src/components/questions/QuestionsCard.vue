@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import type { Question } from '@/App.vue';
 import BaseCard from '../elements/cards/BaseCard.vue';
 import BaseRadio, { type Items } from '../elements/input/radio/BaseRadio.vue';
 
 const props = defineProps<{
-  header: string,
+  header: Question,
+  totalQuesiton: number,
   body: Items[]
 }>()
 
@@ -16,7 +18,10 @@ const emit = defineEmits<{
 <template>
   <BaseCard>
     <template v-slot:header>
-      <h1>{{ header }}</h1>
+      <section class="w-full flex justify-between items-center">
+      <h1>{{ header.question }}</h1>
+        <p>{{ header.id }}/{{ totalQuesiton }}</p>
+      </section>
     </template>
     <template v-slot:body>
       <BaseRadio :items="body" @choose-ans="($event, choice) => emit('chooseAns', $event, choice)"/>
