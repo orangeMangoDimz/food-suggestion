@@ -3,7 +3,7 @@ import type { Question } from '@/App.vue';
 import BaseCard from '../elements/cards/BaseCard.vue';
 import BaseRadio, { type Items } from '../elements/input/radio/BaseRadio.vue';
 
-const props = defineProps<{
+ defineProps<{
   header: Question,
   totalQuesiton: number,
   body: Items[]

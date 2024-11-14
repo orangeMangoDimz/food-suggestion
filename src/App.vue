@@ -280,23 +280,18 @@ const askAI = (): void => {
       console.log('index: ', index)
       console.log('section: ', section)
     })
-    let judul: string,
-      isi: string,
-      alat: Array<string>,
-      bahan: Array<string>,
-      steps: Array<string>
 
-    judul = sections[0].split(':')[1].trim()
-    isi = sections[1].split(':')[1].trim()
-    alat = sections[2]
+    const judul: string = sections[0].split(':')[1].trim()
+    const isi: string = sections[1].split(':')[1].trim()
+    const alat: Array<string> = sections[2]
       .split(':')[1]
       .split(',')
       .map(item => item.trim())
-    bahan = sections[3]
+    const bahan: Array<string> = sections[3]
       .split(':')[1]
       .split(',')
       .map(item => item.trim())
-    steps = sections[4].split(':')[1].split(',')
+    const steps: Array<string> = sections[4].split(':')[1].split(',')
 
     console.log('judul: ', judul)
     console.log('isi: ', isi)

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import BaseList from '../elements/list/BaseList.vue'
 
-const props = defineProps<{
+ defineProps<{
   tools: Array<string>
 }>()
 </script>

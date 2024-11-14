@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { FwbListGroup, FwbListGroupItem, FwbRadio } from 'flowbite-vue'
-import type { Choice } from '@/App.vue';
 
 const picked = ref<string>('')
 
@@ -12,7 +11,7 @@ export interface Items {
   value: string
 }
 
-const props = defineProps<{
+ defineProps<{
   items: Items[]
 }>()
 
