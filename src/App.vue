@@ -212,32 +212,20 @@ export interface Question {
 }
 
 export interface Answer {
+  value: string
   defMsg?: string
   hasAns?: boolean
   hasErr?: boolean
-  title?: string
-  body: {
-    description: string
-    tools: Array<string>
-    ingredients: Array<string>
-    steps: Array<string>
-  }
 }
 
 const data: Question[] = questions
 const ansList = ref<Array<Choice>>([] as Choice[])
 const currQuestionNum = ref<number>(0)
 const response = ref<Answer>({
+  value: '',
   defMsg: 'Processing ...',
   hasAns: false,
   hasErr: false,
-  title: '',
-  body: {
-    description: '',
-    tools: [],
-    ingredients: [],
-    steps: [],
-  },
 })
 
 const chooseAns = (_: MouseEvent, value: Choice) => {
@@ -263,50 +251,35 @@ const askAI = (): void => {
   })}
   Aturan:
 1. Makanan harus berasal dari Indonesia
-2. Gunakan format jawaban berikut:
-    Judul: [Nama Makanan]
-    Isi: [Deskripsi Makanan]
-    Alat: [List Alat berupa array dipisah dengan tanda koma]
-    Bahan: [List Bahan berupa array dipisah dengan tanda koma]
-    Steps: [List langkah - langkah berupa array dipisah dengan tanda koma]
-3. Gunakan huruf kecil untuk semua kata dan tidak mengandung format markdown
-4. Untuk jawaban berupa array, jangan gunakan penomeran. Cukup pisahkan dengan koma dan spasi. Jika lebih dari 1 kalimat, pisahkan dengan tanda titik dan spasi
+2. Jawaban harus dalam bentuk markdown
+3. Untuk setiap baris baru, gunakan \n
+4. Jangan memberikan respon dalam format code
+5. List dalam bentuk urutan nomor
+6. Gunakan format jawaban berikut:
+
+    ##### [Judul Makanan]
+    [Enter two times]
+
+    ##### Deskripsi
+      [Deskripsi Makanan]
+    [Enter two times]
+
+    ##### Alat
+      - [List Alat]
+    [Enter two times]
+
+    ##### Bahan
+      - [List Bahan]
+    [Enter two times]
+
+    ##### Langkah-langkah
+      1. [List Langkah]
 `
-  //> text = originalText.split(/Title:|Body:|Footer:/).map(item => item.trim()).slice(1);
 
   const handleResponse = (res: string): void => {
-    const sections: Array<string> = res.split('\n').map(item => item.trim())
-    sections.map((section, index) => {
-      console.log('index: ', index)
-      console.log('section: ', section)
-    })
-
-    const judul: string = sections[0].split(':')[1].trim()
-    const isi: string = sections[1].split(':')[1].trim()
-    const alat: Array<string> = sections[2]
-      .split(':')[1]
-      .split(',')
-      .map(item => item.trim())
-    const bahan: Array<string> = sections[3]
-      .split(':')[1]
-      .split(',')
-      .map(item => item.trim())
-    const steps: Array<string> = sections[4].split(':')[1].split(',')
-
-    console.log('judul: ', judul)
-    console.log('isi: ', isi)
-    console.log('alat: ', alat)
-    console.log('bahan: ', bahan)
-    console.log('steps: ', steps)
-
+    console.log('res: ', res)
     response.value = {
-      title: judul,
-      body: {
-        description: isi,
-        tools: alat,
-        ingredients: bahan,
-        steps: steps,
-      },
+      value: res,
       hasAns: true,
       hasErr: false,
     }
@@ -321,15 +294,10 @@ const askAI = (): void => {
     .catch(err => {
       console.error(err)
       response.value = {
+        value: '',
         defMsg: 'Error: Something went wrong',
         hasAns: false,
         hasErr: true,
-        body: {
-          description: '',
-          tools: [],
-          ingredients: [],
-          steps: [],
-        },
       }
     })
 }
@@ -344,11 +312,12 @@ watch(currQuestionNum, newVal => {
 <template>
   <main class="h-screen flex flex-col justify-center items-center">
     <div v-if="currQuestionNum < data.length">
-      <QuestionsCard :header="currQuestion" :total-quesiton="data.length" :body="currQuestion.choices" @choose-ans="chooseAns" />
+      <QuestionsCard :header="currQuestion" :total-quesiton="data.length" :body="currQuestion.choices"
+        @choose-ans="chooseAns" />
     </div>
     <div v-else>
       <div v-if="processAns.hasAns">
-        <RecomendationCard header="Hello" :body="processAns" />
+        <RecomendationCard :body="processAns.value" />
       </div>
       <p v-else>{{ processAns.defMsg }}</p>
     </div>
