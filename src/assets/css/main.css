@@ -1,1 +1,66 @@
-@import './base.css';
+/* TODO: Refactor this css */
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: 700 !important;
+    margin-bottom: 16px !important;
+    color: #333 !important;
+}
+
+p {
+    margin-bottom: 16px !important;
+}
+
+h1 {
+    font-size: 48px !important;
+}
+
+h2 {
+    font-size: 30px !important;
+}
+
+h3 {
+    font-size: 24px !important;
+}
+
+h4 {
+    font-size: 20px !important;
+}
+
+h5 {
+    font-size: 18px !important;
+}
+
+h6,
+p {
+    font-size: 16px !important;
+}
+
+ol, ul {
+    margin-bottom: 16px !important;
+}
+
+ol,
+li,
+ul {
+    margin-left: 16px;
+}
+
+ul li {
+    list-style-type: disc;
+}
+
+ol li {
+    list-style-type: decimal;
+}
