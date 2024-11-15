@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import BaseCard from '../elements/cards/BaseCard.vue'
-import { markdown } from 'markdown'
+import { marked } from 'marked';
 
 const props = defineProps<{
   body: string
 }>()
 
-const resMarked = computed(() => markdown.toHTML(props.body))
+const resMarked = computed(() => marked.parse(props.body))
 </script>
 
 <template>

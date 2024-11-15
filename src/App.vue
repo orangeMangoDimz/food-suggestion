@@ -310,7 +310,7 @@ watch(currQuestionNum, newVal => {
 </script>
 
 <template>
-  <main class="h-screen flex flex-col justify-center items-center">
+  <main class="flex flex-col justify-center items-center m-10">
     <div v-if="currQuestionNum < data.length">
       <QuestionsCard :header="currQuestion" :total-quesiton="data.length" :body="currQuestion.choices"
         @choose-ans="chooseAns" />
@@ -323,3 +323,9 @@ watch(currQuestionNum, newVal => {
     </div>
   </main>
 </template>
+
+<style scoped>
+main {
+  min-height: 100vh;
+}
+</style>
