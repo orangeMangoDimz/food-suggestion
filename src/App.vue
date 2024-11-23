@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai'
 import { computed, ref, watch } from 'vue'
 import QuestionsCard from './components/questions/QuestionsCard.vue'
 import RecomendationCard from './components/recomendations/RecomendationCard.vue'
@@ -221,6 +221,7 @@ export interface Answer {
 const data: Question[] = questions
 const ansList = ref<Array<Choice>>([] as Choice[])
 const currQuestionNum = ref<number>(0)
+const generateAgain = ref<boolean>(false)
 const response = ref<Answer>({
   value: '',
   defMsg: 'Processing ...',
@@ -244,11 +245,11 @@ const askAI = (): void => {
   const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
   const prompt = `Tolong rekomendasikan resep makanan untuk saya berdasarkan jawaban-jawaban saya berikut ini:
     ${data.map((item, index) => {
-    return `
+      return `
         Nomor: ${index + 1}
         Pertanyaan: ${item.question}
         Jawaban: ${ansList.value[index].value}`
-  })}
+    })}
   Aturan:
 1. Makanan harus berasal dari Indonesia
 2. Jawaban harus dalam bentuk markdown
@@ -302,6 +303,52 @@ const askAI = (): void => {
     })
 }
 
+const doGenerateAgain = async (): Promise<void> => {
+  const genAI = new GoogleGenerativeAI(GOOGLE_API_KEY)
+  const model: GenerativeModel = genAI.getGenerativeModel({
+    model: 'gemini-1.5-flash',
+  })
+  // ISSUE: AI nya ga ngerti konteks sebelumnya
+  const prompt =
+    'Tolong cari rekomendasi makanan lain yang sejenis dengan menggunakan template yang sama!'
+
+  try {
+    const result: string = await handlePrompt(model, prompt)
+    console.log('result after generate again: ', result)
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const handlePrompt = async (
+  model: GenerativeModel,
+  prompt: string,
+): Promise<string> => {
+  try {
+    const res = await model.generateContent(prompt)
+    const result: string = res.response.text()
+    return result
+  } catch (err) {
+    console.error(err)
+    response.value = {
+      value: '',
+      defMsg: 'Error: Something went wrong',
+      hasAns: false,
+      hasErr: true,
+    }
+    throw err
+  }
+}
+
+const toogleGenerateAgain = () => (generateAgain.value = !generateAgain.value)
+
+watch(generateAgain, newVal => {
+  if (newVal) {
+    doGenerateAgain()
+    toogleGenerateAgain()
+  }
+})
+
 watch(currQuestionNum, newVal => {
   if (newVal === data.length) {
     askAI()
@@ -312,12 +359,19 @@ watch(currQuestionNum, newVal => {
 <template>
   <main class="flex flex-col justify-center items-center m-10">
     <div v-if="currQuestionNum < data.length">
-      <QuestionsCard :header="currQuestion" :total-quesiton="data.length" :body="currQuestion.choices"
-        @choose-ans="chooseAns" />
+      <QuestionsCard
+        :header="currQuestion"
+        :total-quesiton="data.length"
+        :body="currQuestion.choices"
+        @choose-ans="chooseAns"
+      />
     </div>
     <div v-else>
       <div v-if="processAns.hasAns">
-        <RecomendationCard :body="processAns.value" />
+        <RecomendationCard
+          :body="processAns.value"
+          @handle-click="toogleGenerateAgain"
+        />
       </div>
       <p v-else>{{ processAns.defMsg }}</p>
     </div>

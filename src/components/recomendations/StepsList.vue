@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import BaseList from '../elements/list/BaseList.vue'
 
- defineProps<{
+defineProps<{
   steps: Array<string>
 }>()
 </script>

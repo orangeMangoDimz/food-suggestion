@@ -23,8 +23,10 @@ const emit = defineEmits<{
       </section>
     </template>
     <template v-slot:body>
-      <BaseRadio :items="body" @choose-ans="($event, choice) => emit('chooseAns', $event, choice)
-        " />
+      <BaseRadio
+        :items="body"
+        @choose-ans="($event, choice) => emit('chooseAns', $event, choice)"
+      />
     </template>
   </BaseCard>
 </template>
