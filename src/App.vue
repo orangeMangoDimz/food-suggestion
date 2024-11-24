@@ -4,7 +4,7 @@ import {
   GenerativeModel,
   ChatSession,
   type GenerateContentResult,
- type  GenerateContentStreamResult,
+  type GenerateContentStreamResult,
 } from '@google/generative-ai'
 import { computed, ref, watch } from 'vue'
 import QuestionsCard from './components/questions/QuestionsCard.vue'
@@ -230,13 +230,13 @@ interface History {
 }
 
 const defaultResponse = computed<Answer>(() => {
-    return {
-      value: '',
-      defMsg: 'Processing ...',
-      hasAns: false,
-      hasErr: false,
-    }
-});
+  return {
+    value: '',
+    defMsg: 'Processing ...',
+    hasAns: false,
+    hasErr: false,
+  }
+})
 
 const data: Question[] = questions
 const ansList = ref<Array<Choice>>([] as Choice[])
@@ -264,15 +264,15 @@ const baseAIRules = computed<string>(() => {
     4. Jangan memberikan respon dalam format code
     5. List dalam bentuk urutan nomor
     6. Jangan menggunakan <br> atau <br/> untuk baris baru
-    7. Jawaban tidak boleh dalam format markdown code
+    7. Jawaban tidak boleh mengandung tag <pre> dan <code>
     8. Jawaban harus sama persis denagn format yang diberikan
     9. Gunakan format jawaban berikut:
   `
-});
+})
 
 const baseAIResponseFormat = computed<string>(() => {
   return `
-      ##### [Judul Makanan]
+      #### [Judul Makanan]
       [Enter two times]
 
       ##### Deskripsi
@@ -297,17 +297,17 @@ const askAI = (): void => {
   const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
   const prompt = `Tolong rekomendasikan resep makanan untuk saya berdasarkan jawaban-jawaban saya berikut ini:\n
     ${data.map((item, index) => {
-    return `
+      return `
         Nomor: ${index + 1}
         Pertanyaan: ${item.question}
         Jawaban: ${ansList.value[index].value}\n`
-  })}
+    })}
     ${baseAIRules.value}\n
     ${baseAIResponseFormat.value}
 `
   try {
     handleUserPrompt(prompt)
-     handleModelPrompt(prompt)
+    handleModelPrompt(prompt)
   } catch (err) {
     console.error(err)
   }
@@ -319,7 +319,7 @@ const handleGenerateAgain = async (): Promise<void> => {
 ${baseAIRules.value}`
   try {
     handleUserPrompt(prompt)
-     handleModelPrompt(prompt)
+    handleModelPrompt(prompt)
   } catch (err) {
     console.error(err)
   }
@@ -330,7 +330,7 @@ const addUserHistory = (prompt: string): void => {
     role: 'user',
     parts: [{ text: prompt }],
   }
-addNewHistory(newHistory)
+  addNewHistory(newHistory)
 }
 
 const addModelHistory = (prompt: string): void => {
@@ -338,7 +338,7 @@ const addModelHistory = (prompt: string): void => {
     role: 'model',
     parts: [{ text: prompt }],
   }
-addNewHistory(newHistory)
+  addNewHistory(newHistory)
 }
 
 const addNewHistory = (chat: History): void => {
@@ -346,23 +346,25 @@ const addNewHistory = (chat: History): void => {
 }
 
 const handleUserPrompt = (prompt: string) => {
-  console.log("prompt", prompt)
+  console.log('prompt', prompt)
   addUserHistory(prompt)
 }
 
-const handleModelPrompt = async ( prompt: string,): Promise<string> => {
+const handleModelPrompt = async (prompt: string): Promise<string> => {
   try {
     const genAI: GoogleGenerativeAI = new GoogleGenerativeAI(GOOGLE_API_KEY)
-    const model: GenerativeModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash', })
+    const model: GenerativeModel = genAI.getGenerativeModel({
+      model: 'gemini-1.5-flash',
+    })
     const hasHistoryChat = historyChat.value.length > 0
-    let res : GenerateContentResult | GenerateContentStreamResult;
+    let res: GenerateContentResult | GenerateContentStreamResult
     if (!hasHistoryChat) {
-       res = await model.generateContent(prompt)
+      res = await model.generateContent(prompt)
     } else {
-      const chat: ChatSession = model.startChat({ history: historyChat.value, })
-      res =  await chat.sendMessage(prompt)
+      const chat: ChatSession = model.startChat({ history: historyChat.value })
+      res = await chat.sendMessage(prompt)
     }
-      const result: string = res.response.text()
+    const result: string = res.response.text()
     response.value = {
       value: result,
       hasAns: true,
@@ -392,12 +394,19 @@ watch(currQuestionNum, newVal => {
 <template>
   <main class="flex flex-col justify-center items-center m-10">
     <div v-if="currQuestionNum < data.length">
-      <QuestionsCard :header="currQuestion" :total-quesiton="data.length" :body="currQuestion.choices"
-        @choose-ans="chooseAns" />
+      <QuestionsCard
+        :header="currQuestion"
+        :total-quesiton="data.length"
+        :body="currQuestion.choices"
+        @choose-ans="chooseAns"
+      />
     </div>
     <div v-else>
       <div v-if="processAns.hasAns">
-        <RecomendationCard :body="processAns.value" @handle-click="handleGenerateAgain" />
+        <RecomendationCard
+          :body="processAns.value"
+          @handle-click="handleGenerateAgain"
+        />
       </div>
       <p v-else>{{ processAns.defMsg }}</p>
     </div>
