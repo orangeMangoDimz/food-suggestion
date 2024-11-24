@@ -19,12 +19,14 @@ const handleClick = () => {
 </script>
 
 <template>
+  <div class="flex flex-col gap-y-5">
   <BaseCard>
     <template v-slot:body>
       <div v-html="resMarked"></div>
-      <BaseButton @handle-click="handleClick">
-        <template v-slot:content> Generate Again </template>
-      </BaseButton>
     </template>
   </BaseCard>
+    <BaseButton @handle-click="handleClick">
+      <template v-slot:content> Generate Again </template>
+    </BaseButton>
+  </div>
 </template>
