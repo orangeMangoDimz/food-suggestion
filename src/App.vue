@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import {
+  GoogleGenerativeAI,
+  GenerativeModel,
+  ChatSession,
+  type GenerateContentResult,
+ type  GenerateContentStreamResult,
+} from '@google/generative-ai'
 import { computed, ref, watch } from 'vue'
 import QuestionsCard from './components/questions/QuestionsCard.vue'
 import RecomendationCard from './components/recomendations/RecomendationCard.vue'
@@ -218,15 +224,26 @@ export interface Answer {
   hasErr?: boolean
 }
 
+interface History {
+  role: 'user' | 'model'
+  parts: [{ text: string }]
+}
+
+const defaultResponse = computed<Answer>(() => {
+    return {
+      value: '',
+      defMsg: 'Processing ...',
+      hasAns: false,
+      hasErr: false,
+    }
+});
+
 const data: Question[] = questions
 const ansList = ref<Array<Choice>>([] as Choice[])
 const currQuestionNum = ref<number>(0)
-const response = ref<Answer>({
-  value: '',
-  defMsg: 'Processing ...',
-  hasAns: false,
-  hasErr: false,
-})
+const generateAgain = ref<boolean>(false)
+const historyChat = ref<Array<History>>([] as History[])
+const response = ref<Answer>(defaultResponse.value)
 
 const chooseAns = (_: MouseEvent, value: Choice) => {
   ansList.value.push(value)
@@ -238,68 +255,131 @@ const currQuestion = computed<Question>(() => {
 })
 
 const processAns = computed<Answer>(() => response.value)
+const baseAIRules = computed<string>(() => {
+  return `
+      Aturan:
+    1. Makanan harus berasal dari Indonesia
+    2. Jawaban harus dalam bentuk markdown
+    3. Untuk setiap baris baru, gunakan \n
+    4. Jangan memberikan respon dalam format code
+    5. List dalam bentuk urutan nomor
+    6. Jangan menggunakan <br> atau <br/> untuk baris baru
+    7. Jawaban tidak boleh dalam format markdown code
+    8. Jawaban harus sama persis denagn format yang diberikan
+    9. Gunakan format jawaban berikut:
+  `
+});
+
+const baseAIResponseFormat = computed<string>(() => {
+  return `
+      ##### [Judul Makanan]
+      [Enter two times]
+
+      ##### Deskripsi
+        [Deskripsi Makanan]
+      [Enter two times]
+
+      ##### Alat
+        - [List Alat]
+      [Enter two times]
+
+      ##### Bahan
+        - [List Bahan]
+      [Enter two times]
+
+      ##### Langkah-langkah
+        1. [List Langkah]
+  `
+})
 
 const askAI = (): void => {
   const genAI = new GoogleGenerativeAI(GOOGLE_API_KEY)
   const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
-  const prompt = `Tolong rekomendasikan resep makanan untuk saya berdasarkan jawaban-jawaban saya berikut ini:
+  const prompt = `Tolong rekomendasikan resep makanan untuk saya berdasarkan jawaban-jawaban saya berikut ini:\n
     ${data.map((item, index) => {
     return `
         Nomor: ${index + 1}
         Pertanyaan: ${item.question}
-        Jawaban: ${ansList.value[index].value}`
+        Jawaban: ${ansList.value[index].value}\n`
   })}
-  Aturan:
-1. Makanan harus berasal dari Indonesia
-2. Jawaban harus dalam bentuk markdown
-3. Untuk setiap baris baru, gunakan \n
-4. Jangan memberikan respon dalam format code
-5. List dalam bentuk urutan nomor
-6. Gunakan format jawaban berikut:
-
-    ##### [Judul Makanan]
-    [Enter two times]
-
-    ##### Deskripsi
-      [Deskripsi Makanan]
-    [Enter two times]
-
-    ##### Alat
-      - [List Alat]
-    [Enter two times]
-
-    ##### Bahan
-      - [List Bahan]
-    [Enter two times]
-
-    ##### Langkah-langkah
-      1. [List Langkah]
+    ${baseAIRules.value}\n
+    ${baseAIResponseFormat.value}
 `
+  try {
+    handleUserPrompt(prompt)
+     handleModelPrompt(prompt)
+  } catch (err) {
+    console.error(err)
+  }
+}
 
-  const handleResponse = (res: string): void => {
-    console.log('res: ', res)
+const handleGenerateAgain = async (): Promise<void> => {
+  response.value = defaultResponse.value
+  const prompt = `Tolong cari rekomendasi makanan lain yang sejenis dengan menggunakan template yang sama!\n
+${baseAIRules.value}`
+  try {
+    handleUserPrompt(prompt)
+     handleModelPrompt(prompt)
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const addUserHistory = (prompt: string): void => {
+  let newHistory: History = {
+    role: 'user',
+    parts: [{ text: prompt }],
+  }
+addNewHistory(newHistory)
+}
+
+const addModelHistory = (prompt: string): void => {
+  let newHistory: History = {
+    role: 'model',
+    parts: [{ text: prompt }],
+  }
+addNewHistory(newHistory)
+}
+
+const addNewHistory = (chat: History): void => {
+  historyChat.value.push(chat)
+}
+
+const handleUserPrompt = (prompt: string) => {
+  console.log("prompt", prompt)
+  addUserHistory(prompt)
+}
+
+const handleModelPrompt = async ( prompt: string,): Promise<string> => {
+  try {
+    const genAI: GoogleGenerativeAI = new GoogleGenerativeAI(GOOGLE_API_KEY)
+    const model: GenerativeModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash', })
+    const hasHistoryChat = historyChat.value.length > 0
+    let res : GenerateContentResult | GenerateContentStreamResult;
+    if (!hasHistoryChat) {
+       res = await model.generateContent(prompt)
+    } else {
+      const chat: ChatSession = model.startChat({ history: historyChat.value, })
+      res =  await chat.sendMessage(prompt)
+    }
+      const result: string = res.response.text()
     response.value = {
-      value: res,
+      value: result,
       hasAns: true,
       hasErr: false,
     }
+    addModelHistory(result)
+    return result
+  } catch (err) {
+    console.error(err)
+    response.value = {
+      value: '',
+      defMsg: 'Error: Something went wrong',
+      hasAns: false,
+      hasErr: true,
+    }
+    throw err
   }
-
-  model
-    .generateContent(prompt)
-    .then(res => {
-      const result: string = res.response.text()
-      handleResponse(result)
-    })
-    .catch(err => {
-      console.error(err)
-      response.value = {
-        value: '',
-        defMsg: 'Error: Something went wrong',
-        hasAns: false,
-        hasErr: true,
-      }
-    })
 }
 
 watch(currQuestionNum, newVal => {
@@ -317,7 +397,7 @@ watch(currQuestionNum, newVal => {
     </div>
     <div v-else>
       <div v-if="processAns.hasAns">
-        <RecomendationCard :body="processAns.value" />
+        <RecomendationCard :body="processAns.value" @handle-click="handleGenerateAgain" />
       </div>
       <p v-else>{{ processAns.defMsg }}</p>
     </div>
