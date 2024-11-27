@@ -1,102 +1,102 @@
 [
-    {
-        "id": 1,
-        "question": "How are you feeling today?",
-        "choices": [
-            { "id": 1, "value": "Happy and Energetic" },
-            { "id": 2, "value": "Sad and Tired" },
-            { "id": 3, "value": "Angry and Frustrated" },
-            { "id": 4, "value": "Calm and Relaxed" }
-        ]
-    },
-    {
-        "id": 2,
-        "question": "What kind of food craving do you have?",
-        "choices": [
-            { "id": 1, "value": "Something Salty and Crunchy" },
-            { "id": 2, "value": "Something Sweet and Indulgent" },
-            { "id": 3, "value": "Something Hearty and Comforting" },
-            { "id": 4, "value": "Something Light and Refreshing" }
-        ]
-    },
-    {
-        "id": 3,
-        "question": "How much time do you have to cook?",
-        "choices": [
-            { "id": 1, "value": "No time at all" },
-            { "id": 2, "value": "15-30 minutes" },
-            { "id": 3, "value": "30-45 minutes" },
-            { "id": 4, "value": "45+ minutes" }
-        ]
-    },
-    {
-        "id": 4,
-        "question": "What is your dietary preference?",
-        "choices": [
-            { "id": 1, "value": "Vegetarian" },
-            { "id": 2, "value": "Vegan" },
-            { "id": 3, "value": "Gluten-Free" },
-            { "id": 4, "value": "No Restrictions" }
-        ]
-    },
-    {
-        "id": 5,
-        "question": "What kind of cuisine are you in the mood for?",
-        "choices": [
-            { "id": 1, "value": "Italian" },
-            { "id": 2, "value": "Mexican" },
-            { "id": 3, "value": "Indian" },
-            { "id": 4, "value": "Asian" }
-        ]
-    },
-    {
-        "id": 6,
-        "question": "What is the occasion?",
-        "choices": [
-            { "id": 1, "value": "Casual Dinner" },
-            { "id": 2, "value": "Romantic Dinner" },
-            { "id": 3, "value": "Party" },
-            { "id": 4, "value": "Solo Meal" }
-        ]
-    },
-    {
-        "id": 7,
-        "question": "What is your desired level of spiciness?",
-        "choices": [
-            { "id": 1, "value": "Mild" },
-            { "id": 2, "value": "Medium" },
-            { "id": 3, "value": "Spicy" },
-            { "id": 4, "value": "Very Spicy" }
-        ]
-    },
-    {
-        "id": 8,
-        "question": "What is your preferred cooking method?",
-        "choices": [
-            { "id": 1, "value": "Baking" },
-            { "id": 2, "value": "Grilling" },
-            { "id": 3, "value": "Sautéing" },
-            { "id": 4, "value": "Boiling" }
-        ]
-    },
-    {
-        "id": 9,
-        "question": "What is your budget for this meal?",
-        "choices": [
-            { "id": 1, "value": "Low Budget" },
-            { "id": 2, "value": "Medium Budget" },
-            { "id": 3, "value": "High Budget" },
-            { "id": 4, "value": "No Budget" }
-        ]
-    },
-    {
-        "id": 10,
-        "question": "What is your preferred meal size?",
-        "choices": [
-            { "id": 1, "value": "Small" },
-            { "id": 2, "value": "Medium" },
-            { "id": 3, "value": "Large" },
-            { "id": 4, "value": "Doesn't Matter" }
-        ]
-    }
+  {
+    "id": 1,
+    "question": "How are you feeling today?",
+    "choices": [
+      { "id": 1, "value": "Happy and Energetic" },
+      { "id": 2, "value": "Sad and Tired" },
+      { "id": 3, "value": "Angry and Frustrated" },
+      { "id": 4, "value": "Calm and Relaxed" }
+    ]
+  },
+  {
+    "id": 2,
+    "question": "What kind of food craving do you have?",
+    "choices": [
+      { "id": 1, "value": "Something Salty and Crunchy" },
+      { "id": 2, "value": "Something Sweet and Indulgent" },
+      { "id": 3, "value": "Something Hearty and Comforting" },
+      { "id": 4, "value": "Something Light and Refreshing" }
+    ]
+  },
+  {
+    "id": 3,
+    "question": "How much time do you have to cook?",
+    "choices": [
+      { "id": 1, "value": "No time at all" },
+      { "id": 2, "value": "15-30 minutes" },
+      { "id": 3, "value": "30-45 minutes" },
+      { "id": 4, "value": "45+ minutes" }
+    ]
+  },
+  {
+    "id": 4,
+    "question": "What is your dietary preference?",
+    "choices": [
+      { "id": 1, "value": "Vegetarian" },
+      { "id": 2, "value": "Vegan" },
+      { "id": 3, "value": "Gluten-Free" },
+      { "id": 4, "value": "No Restrictions" }
+    ]
+  },
+  {
+    "id": 5,
+    "question": "What kind of cuisine are you in the mood for?",
+    "choices": [
+      { "id": 1, "value": "Italian" },
+      { "id": 2, "value": "Mexican" },
+      { "id": 3, "value": "Indian" },
+      { "id": 4, "value": "Asian" }
+    ]
+  },
+  {
+    "id": 6,
+    "question": "What is the occasion?",
+    "choices": [
+      { "id": 1, "value": "Casual Dinner" },
+      { "id": 2, "value": "Romantic Dinner" },
+      { "id": 3, "value": "Party" },
+      { "id": 4, "value": "Solo Meal" }
+    ]
+  },
+  {
+    "id": 7,
+    "question": "What is your desired level of spiciness?",
+    "choices": [
+      { "id": 1, "value": "Mild" },
+      { "id": 2, "value": "Medium" },
+      { "id": 3, "value": "Spicy" },
+      { "id": 4, "value": "Very Spicy" }
+    ]
+  },
+  {
+    "id": 8,
+    "question": "What is your preferred cooking method?",
+    "choices": [
+      { "id": 1, "value": "Baking" },
+      { "id": 2, "value": "Grilling" },
+      { "id": 3, "value": "Sautéing" },
+      { "id": 4, "value": "Boiling" }
+    ]
+  },
+  {
+    "id": 9,
+    "question": "What is your budget for this meal?",
+    "choices": [
+      { "id": 1, "value": "Low Budget" },
+      { "id": 2, "value": "Medium Budget" },
+      { "id": 3, "value": "High Budget" },
+      { "id": 4, "value": "No Budget" }
+    ]
+  },
+  {
+    "id": 10,
+    "question": "What is your preferred meal size?",
+    "choices": [
+      { "id": 1, "value": "Small" },
+      { "id": 2, "value": "Medium" },
+      { "id": 3, "value": "Large" },
+      { "id": 4, "value": "Doesn't Matter" }
+    ]
+  }
 ]
