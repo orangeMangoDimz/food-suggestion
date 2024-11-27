@@ -264,31 +264,29 @@ const baseAIRules = computed<string>(() => {
     4. Jangan memberikan respon dalam format code
     5. List dalam bentuk urutan nomor
     6. Jangan menggunakan <br> atau <br/> untuk baris baru
-    7. Jawaban tidak boleh mengandung tag <pre> dan <code>
+    7. Jawaban tidak boleh dalam bentuk code!
     8. Jawaban harus sama persis denagn format yang diberikan
     9. Gunakan format jawaban berikut:
-  `
+    **IMPORTANT:**
+    JANGAN MEMBERIKAN TAG (\`<code>\`, \`</code>\`, ATAU BACKTICKS) DALAM Jawaban
+`
 })
 
 const baseAIResponseFormat = computed<string>(() => {
   return `
       #### [Judul Makanan]
-      [Enter two times]
 
       ##### Deskripsi
-        [Deskripsi Makanan]
-      [Enter two times]
+        Deskripsi Makanan
 
       ##### Alat
-        - [List Alat]
-      [Enter two times]
+        - List Alat
 
       ##### Bahan
-        - [List Bahan]
-      [Enter two times]
+        - List Bahan
 
       ##### Langkah-langkah
-        1. [List Langkah]
+        1. List Langkah
   `
 })
 

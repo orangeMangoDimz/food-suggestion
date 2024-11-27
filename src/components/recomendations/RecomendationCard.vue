@@ -4,6 +4,9 @@ import BaseCard from '../elements/cards/BaseCard.vue'
 import { marked } from 'marked'
 import BaseButton from '../elements/button/BaseButton.vue'
 import axios from 'axios'
+import YoutubeCards from './YoutubeCards.vue'
+import BaseHeading from '../elements/heading/BaseHeading.vue'
+import BaseLink from '../elements/link/BaseLink.vue'
 
 const GOOGLE_API_KEY = import.meta.env.VITE_API_YOUTUBE_KEY
 
@@ -15,7 +18,8 @@ interface SearchParam {
   q: string
 }
 
-interface YoutubeVideo {
+// TODO: handle if the description is null
+export interface YoutubeVideo {
   id: {
     videoId: string
   }
@@ -23,6 +27,16 @@ interface YoutubeVideo {
     channelId: string
     channelTitle: string
     thumbnails: {
+      default: {
+        height: number
+        url: string
+        width: number
+      }
+      medium: {
+        height: number
+        url: string
+        width: number
+      }
       high: {
         height: number
         url: string
@@ -44,6 +58,7 @@ interface YoutubeResponse {
 
 const responseContainer = ref<HTMLElement | null>(null)
 const videoList = ref<Array<YoutubeVideo>>([] as YoutubeVideo[])
+const currTitle = ref<string>('')
 
 const props = defineProps<{
   body: string
@@ -83,8 +98,9 @@ onMounted(() => {
       maxResults: 3,
       order: 'viewCount',
       key: GOOGLE_API_KEY,
-      q: title || '',
+      q: 'cara membuat ' + title || '',
     }
+    currTitle.value = initParams.q
     try {
       console.log('title', title)
       searchVideoYoutube(initParams)
@@ -102,42 +118,34 @@ const openVideoLink = (link: string): void => {
 }
 
 const openChannelUrl = (channelId: string): void => {
-  const baseChannelUrl: string = 'https://www.youtube.com/channel'
-  const baseParam: string = `?channelId=${channelId}`
-  const finalUrl: string = baseChannelUrl + baseParam
-  window.open(finalUrl, '_blank')
+  const url: string = `https://www.youtube.com/channel/${channelId}`
+  window.open(url, '_blank')
+}
+
+const viewAllLink = (): string => {
+  if (currTitle.value) {
+    return `https://www.youtube.com/results?search_query=${currTitle.value}`
+  }
+  return 'https://www.youtube.com/'
 }
 </script>
 
 <template>
-  <div class="flex flex-col gap-y-5">
-    <BaseCard>
-      <template v-slot:body>
-        <div ref="responseContainer" v-html="resMarked"></div>
-        <BaseCard
-          v-for="(item, index) in videoList"
-          :key="index"
-          v-if="videoList.length !== 0"
-        >
-          <template v-slot:header>
-            <div class="flex flex-col gap-y-5">
-              <img :src="item.snippet.thumbnails.high.url" alt="thumbnail" />
-              <p @click="openChannelUrl(item.snippet.channelId)">
-                {{ item.snippet.channelTitle }}
-              </p>
-            </div>
-          </template>
-          <template v-slot:body @click="openVideoLink(item.id.videoId)">
-            <div class="flex flex-col">
-              <h4>{{ item.snippet.title }}</h4>
-              <p>{{ item.snippet.description }}</p>
-            </div>
-          </template>
-        </BaseCard>
-      </template>
-    </BaseCard>
-    <BaseButton @handle-click="handleClick">
-      <template v-slot:content> Generate Again </template>
-    </BaseButton>
-  </div>
+  <BaseCard>
+    <template v-slot:body>
+      <div ref="responseContainer" class="mt-3" v-html="resMarked"></div>
+      <div class="flex w-full justify-between items-center">
+        <BaseHeading class-name="w-fit" tag="h4" content="Referensi Video" />
+        <BaseLink :link="viewAllLink()" content="Lihat Semua" />
+      </div>
+      <YoutubeCards
+        :video-list="videoList"
+        @open-video-link="openVideoLink"
+        @open-channel-url="openChannelUrl"
+      />
+    </template>
+  </BaseCard>
+  <BaseButton @handle-click="handleClick" class-name="mt-5">
+    <template v-slot:content> Generate Again </template>
+  </BaseButton>
 </template>

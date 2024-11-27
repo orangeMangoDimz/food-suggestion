@@ -7,11 +7,11 @@ defineProps<{
 </script>
 
 <template>
-  <fwb-list-group class="w-full">
+  <fwb-list-group class="w-full m-0">
     <fwb-list-group-item
       v-for="(item, index) in items"
       :key="index"
-      class="w-full"
+      class="w-full m-0"
     >
       {{ item }}
     </fwb-list-group-item>

@@ -2,6 +2,7 @@
 import type { Question } from '@/App.vue'
 import BaseCard from '../elements/cards/BaseCard.vue'
 import BaseRadio, { type Items } from '../elements/input/radio/BaseRadio.vue'
+import BaseHeading from '../elements/heading/BaseHeading.vue'
 
 defineProps<{
   header: Question
@@ -17,8 +18,8 @@ const emit = defineEmits<{
 <template>
   <BaseCard>
     <template v-slot:header>
-      <section class="w-full flex justify-between items-center">
-        <h5>{{ header.question }}</h5>
+      <section class="w-full flex justify-between items-center px-5">
+        <BaseHeading tag="h5" :content="header.question" class-name="mt-3" />
         <p>{{ header.id }}/{{ totalQuesiton }}</p>
       </section>
     </template>

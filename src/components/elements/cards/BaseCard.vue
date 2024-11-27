@@ -1,5 +1,10 @@
 <script setup lang="ts">
 import { FwbCard } from 'flowbite-vue'
+const props = defineProps<{
+  className?: string
+  style?: any
+}>()
+
 const emit = defineEmits<{
   (e: 'handleClick'): void
 }>()
@@ -7,18 +12,31 @@ const emit = defineEmits<{
 const handleClick = (): void => {
   emit('handleClick')
 }
+
+const initClass = `hover:bg-white bg-white border-solid border-2 border-sky-500  ${props.className}`
 </script>
 
 <template>
-  <fwb-card
-    class="w-full hover:bg-white bg-white"
-    variant="horizontal"
-    @click="handleClick"
-  >
-    <div class="p-5 flex flex-col gap-y-5 justify-center items-start">
-      <slot name="header"></slot>
-      <slot name="body"></slot>
-      <slot name="footer"></slot>
+  <div :class="['card-wrapper', initClass]">
+    <div @click="handleClick">
+      <div class="card-header">
+        <slot name="header"></slot>
+      </div>
+      <div class="card-body px-5">
+        <slot name="body"></slot>
+      </div>
+      <div class="card-footer">
+        <slot name="footer"></slot>
+      </div>
     </div>
-  </fwb-card>
+  </div>
 </template>
+
+<style scoped>
+.card-wrapper {
+  min-width: 350px;
+  max-width: 650px;
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+</style>
