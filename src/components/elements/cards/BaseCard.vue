@@ -13,7 +13,7 @@ const handleClick = (): void => {
   emit('handleClick')
 }
 
-const initClass = `hover:bg-white bg-white border-solid border-2 border-sky-500  ${props.className}`
+const initClass = `shadow-md ${props.className}`
 </script>
 
 <template>
@@ -22,7 +22,7 @@ const initClass = `hover:bg-white bg-white border-solid border-2 border-sky-500 
       <div class="card-header">
         <slot name="header"></slot>
       </div>
-      <div class="card-body px-5">
+      <div class="card-body p-5">
         <slot name="body"></slot>
       </div>
       <div class="card-footer">
@@ -34,6 +34,8 @@ const initClass = `hover:bg-white bg-white border-solid border-2 border-sky-500 
 
 <style scoped>
 .card-wrapper {
+  background: var(--card_background);
+  border-radius: 0.5rem;
   min-width: 350px;
   max-width: 650px;
   scroll-snap-align: start;

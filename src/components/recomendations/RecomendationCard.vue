@@ -7,6 +7,7 @@ import axios from 'axios'
 import YoutubeCards from './YoutubeCards.vue'
 import BaseHeading from '../elements/heading/BaseHeading.vue'
 import BaseLink from '../elements/link/BaseLink.vue'
+import BaseParagraph from '../elements/paragraph/BaseParagraph.vue'
 
 const GOOGLE_API_KEY = import.meta.env.VITE_API_YOUTUBE_KEY
 
@@ -133,16 +134,32 @@ const viewAllLink = (): string => {
 <template>
   <BaseCard>
     <template v-slot:body>
-      <div ref="responseContainer" class="mt-3" v-html="resMarked"></div>
-      <div class="flex w-full justify-between items-center">
-        <BaseHeading class-name="w-fit" tag="h4" content="Referensi Video" />
-        <BaseLink :link="viewAllLink()" content="Lihat Semua" />
+      <div class="flex flex-col gap-y-5">
+        <div
+          ref="responseContainer"
+          class="flex flex-col gap-y-5"
+          v-html="resMarked"
+        ></div>
+        <div class="flex flex-col gap-y-1">
+          <div class="flex w-full justify-between items-center">
+            <BaseHeading
+              class-name="w-fit"
+              tag="h5"
+              content="Referensi Video"
+            />
+            <BaseLink :link="viewAllLink()" content="Lihat Semua" />
+          </div>
+          <BaseParagraph
+            class-name="hint-text hidden"
+            content="Swipe ke kanan untuk melihat video lainnya"
+          />
+        </div>
+        <YoutubeCards
+          :video-list="videoList"
+          @open-video-link="openVideoLink"
+          @open-channel-url="openChannelUrl"
+        />
       </div>
-      <YoutubeCards
-        :video-list="videoList"
-        @open-video-link="openVideoLink"
-        @open-channel-url="openChannelUrl"
-      />
     </template>
   </BaseCard>
   <BaseButton @handle-click="handleClick" class-name="mt-5">

@@ -11,17 +11,20 @@ export interface Items {
   value: string
 }
 
-defineProps<{
+const props = defineProps<{
   items: Items[]
+  className?: string
 }>()
 
 const emit = defineEmits<{
   (e: 'chooseAns', el: MouseEvent, choice: Items): void
 }>()
+
+const initClass = `w-full m-0 px-0 ${props.className}`
 </script>
 
 <template>
-  <fwb-list-group class="w-full m-0 px-0 border-none">
+  <fwb-list-group :class="initClass">
     <fwb-list-group-item
       v-for="(item, index) in items"
       :key="index"
