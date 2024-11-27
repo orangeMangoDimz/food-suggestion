@@ -413,7 +413,6 @@ watch(currQuestionNum, newVal => {
 
 <style scoped>
 main {
-  width: 100vw;
   min-height: 100vh;
   background: var(--background);
 }
