@@ -1,5 +1,13 @@
 /* TODO: Refactor this css */
 
+:root {
+  --background: #e3f6f5;
+  --card_background: #fffffe;
+  --heading: #33272a;
+  --paragraph: #594a4e;
+  --hightlight: #ffd803;
+}
+
 * {
   padding: 0;
   margin: 0;
@@ -13,43 +21,56 @@ h3,
 h4,
 h5,
 h6 {
-  font-weight: 700 !important;
-  margin-bottom: 16px !important;
-  color: #333 !important;
+  font-weight: 700;
+  color: #333;
 }
 
 p {
-  margin-bottom: 16px !important;
+  margin-bottom: 16px;
 }
 
 h1 {
-  font-size: 48px !important;
+  font-size: 48px;
 }
 
 h2 {
-  font-size: 30px !important;
+  font-size: 30px;
 }
 
 h3 {
-  font-size: 24px !important;
+  font-size: 24px;
 }
 
 h4 {
-  font-size: 20px !important;
+  font-size: 20px;
 }
 
 h5 {
-  font-size: 18px !important;
+  font-size: 18px;
 }
 
 h6,
 p {
-  font-size: 16px !important;
+  font-size: 16px;
 }
 
-ol,
 ul {
-  margin-bottom: 16px !important;
+  background: none;
+}
+
+li {
+  /*opacity: 0.6;*/
+  /*transition: 0.3s;*/
+  /*border: 1px solid var(--heading);*/
+}
+
+/*li:hover {*/
+/*    background: var(--hightlight);*/
+/*}*/
+
+input[type='checkbox']:focus,
+input[type='radio']:focus {
+  outline-color: none;
 }
 
 ol,
@@ -64,4 +85,21 @@ ul li {
 
 ol li {
   list-style-type: decimal;
+}
+
+@media (max-width: 650px) {
+  .card-wrapper {
+    max-width: 500px !important;
+  }
+}
+
+@media (max-width: 500px) {
+  .hint-text {
+    display: block;
+    color: gray;
+  }
+  .card-wrapper {
+    max-width: 350px !important;
+    min-width: 100% !important;
+  }
 }

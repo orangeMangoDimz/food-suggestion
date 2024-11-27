@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { FwbButton } from 'flowbite-vue'
-import { computed } from 'vue';
+import { computed } from 'vue'
 
 const props = withDefaults(
   defineProps<{
@@ -22,7 +22,7 @@ const handleClick = () => {
 
 const defBtnClass = computed<string>(() => {
   return `w-full ${props.className}`
-});
+})
 </script>
 
 <template>
